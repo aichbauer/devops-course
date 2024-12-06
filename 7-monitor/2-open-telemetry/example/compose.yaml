@@ -1,0 +1,35 @@
+services:
+  otel-collector:
+    # OpenTelemetry Collector to receive, process, and export telemetry data (traces, metrics, logs).
+    image: otel/opentelemetry-collector-contrib  # Contrib version includes additional plugins and processors.
+    container_name: otel-collector  # Name of the container for easier management.
+    ports:
+      - "4317:4317"  # Exposes the OTLP gRPC endpoint for telemetry data ingestion.
+      - "55681:55681"  # Exposes the OTLP HTTP endpoint for telemetry data ingestion.
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml  # Mounts the OpenTelemetry Collector configuration file.
+    command:
+      --config ./etc/otel-collector-config.yaml  # Specifies the path to the configuration file inside the container.
+
+  tempo:
+    # Grafana Tempo for distributed tracing backend.
+    image: grafana/tempo:latest  # Latest version of Grafana Tempo.
+    container_name: tempo  # Name of the container for easier management.
+    ports:
+      - "9095:9095"
+      - "3100:3100"  # Exposes Tempo's query and ingestion API endpoint.
+    volumes:
+      - ./tempo.yaml:/etc/tempo.yaml  # Mounts Tempo's configuration file.
+    command:
+      -config.file=/etc/tempo.yaml  # Specifies the configuration file path inside the container.
+
+  grafana:
+    # Grafana visualization and analytics platform for metrics, logs, and traces.
+    image: grafana/grafana:latest  # Latest version of Grafana.
+    container_name: grafana  # Name of the container for easier management.
+    ports:
+      - "3000:3000"  # Exposes Grafana's web interface.
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin  # Sets the admin user's password.
+    depends_on:
+      - tempo  # Ensures the Tempo service is started before Grafana.

@@ -1,0 +1,40 @@
+name: "my-infrastructure-pipeline"
+
+run-name: "my-infrastructure-pipeline - @${{ github.actor }}"
+
+on:
+  workflow_dispatch: # allow trigger from github dashboard
+  push:
+    branches:
+      - main
+    paths:
+      - "ops/terraform/**"
+
+jobs:
+  iac-test:
+    name: "IaC Test"
+    runs-on: ubuntu-latest
+    steps:
+    - name: "LOAD BUILD ARTIFACTS"
+      run: echo "Load build artifacts"
+    - name: "IaC TEST STEP"
+      run: echo "IaC TEST STEP"
+
+  plan:
+    name: "Plan"
+    runs-on: ubuntu-latest
+    needs: iac-test
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: "CHECKOUT STEP"
+      uses: actions/checkout@v4
+    - name: "PLAN STEP"
+      run: echo "PLAN STEP"
+
+  apply:
+    name: "Apply"
+    runs-on: ubuntu-latest
+    needs: plan
+    steps:
+    - name: "APPLY STEP"
+      run: echo "APPLY STEP"

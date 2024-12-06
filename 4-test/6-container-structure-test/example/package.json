@@ -1,0 +1,16 @@
+{
+  "name": "example-docker-application",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "description": "This is an example Application for demonstatring Docker",
+  "author": "Lukas Aichbauer <lukas@devopscycle.com> (https://devopscycle.com)",
+  "license": "MIT",
+  "dependencies": {
+    "fastify": "^5.0.0"
+  }
+}

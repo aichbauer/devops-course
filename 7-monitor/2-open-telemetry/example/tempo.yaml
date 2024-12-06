@@ -1,0 +1,38 @@
+server:
+  http_listen_port: 3100
+  # Defines the HTTP port where the Tempo server listens for incoming API and query requests.
+
+distributor:
+  receivers:
+    otlp:
+      # Configures the OTLP receiver to accept telemetry data (traces).
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317
+          # Specifies that the OTLP gRPC receiver listens on all network interfaces on port 4317.
+
+ingester:
+  trace_idle_period: 30s
+  # Specifies the duration to wait before finalizing a trace when no new spans are received (idle period).
+
+  max_block_bytes: 1048576  # 1MiB in bytes
+  # Sets the maximum size of a trace block in bytes. Once this limit is reached, the block is finalized and written to storage.
+
+querier:
+  frontend_worker:
+    frontend_address: 127.0.0.1:9095
+    # Configures the querier to connect to a query frontend at the specified address and port (127.0.0.1:9095).
+    # The query frontend coordinates and optimizes query handling for Tempo.
+
+storage:
+  trace:
+    backend: local
+    # Sets the storage backend for trace data. "local" indicates that traces will be stored on the local filesystem.
+    local:
+      path: /tmp/tempo/traces
+      # Specifies the file system path where traces will be stored. In this case, under `/tmp/tempo/traces`.
+
+compactor:
+  compaction:
+    block_retention: 48h
+    # Configures the retention period for trace blocks. Blocks older than 48 hours will be removed during compaction.

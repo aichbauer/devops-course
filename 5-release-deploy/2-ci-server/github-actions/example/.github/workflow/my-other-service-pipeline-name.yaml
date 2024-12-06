@@ -1,0 +1,99 @@
+name: "my-other-service-pipeline-name"
+
+run-name: "my-other-service-pipeline-name - @${{ github.actor }}"
+
+on:
+  workflow_dispatch: # allow trigger from github dashboard
+  push:
+    branches:
+      - main
+    paths:
+      - "other-service/**"
+      - "ops/k8s/**"
+
+
+jobs:
+  build:
+    name: "Build"
+    runs-on: ubuntu-latest
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: "CHECKOUT STEP"
+      uses: actions/checkout@v4
+    - name: "BUILD STEP"
+      run: echo "BUILD STEP"
+
+  unit-test:
+    name: "Unit Test"
+    runs-on: ubuntu-latest
+    needs: build # will run parallel with all other tests
+    steps:
+    - name: "LOAD BUILD ARTIFACTS"
+      run: echo "Load build artifacts"
+    - name: "UNIT TEST STEP"
+      run: echo "UNIT TEST STEP"
+
+  integration-test:
+    name: "Integration Test"
+    runs-on: ubuntu-latest
+    needs: build # will run parallel with all other tests
+    steps:
+    - name: "LOAD BUILD ARTIFACTS"
+      run: echo "Load build artifacts"
+    - name: "INTEGRATION TEST STEP"
+      run: echo "INTEGRATION TEST STEP"
+
+  e2e-test:
+    name: "E2E Test"
+    runs-on: ubuntu-latest
+    needs: build # will run parallel with all other tests
+    steps:
+    - name: "LOAD BUILD ARTIFACTS"
+      run: echo "Load build artifacts"
+    - name: "E2E TEST STEP"
+      run: echo "E2E TEST STEP (probably after deployment with auto rollback)"
+
+  container-structure-test:
+    name: "Container Stucture Test"
+    runs-on: ubuntu-latest
+    needs: build # will run parallel with all other tests
+    steps:
+    - name: "LOAD BUILD ARTIFACTS"
+      run: echo "Load build artifacts"
+    - name: "CONTAINER STRUCTURE TEST STEP"
+      run: echo "CONTAINER STRUCTURE TEST STEP"
+
+  security-test:
+    name: "Security Test"
+    runs-on: ubuntu-latest
+    needs: build # will run parallel with all other tests
+    steps:
+    - name: "LOAD BUILD ARTIFACTS"
+      run: echo "Load build artifacts"
+    - name: "SECURITY TEST STEP"
+      run: echo "SECURITY TEST STEP"
+
+  delivery:
+    name: "Delivery"
+    runs-on: ubuntu-latest
+    needs: [
+      build,
+      unit-test,
+      integration-test,
+      e2e-test,
+      container-structure-test,
+      security-test,
+    ]
+    steps:
+    - name: "LOAD BUILD ARTIFACTS"
+      run: echo "Load build artifacts"
+    - name: "DELIVERY STEP"
+      run: echo "DELIVERY STEP (to docker registry)"
+
+  deploy:
+    name: "Deploy"
+    runs-on: ubuntu-latest
+    needs: delivery
+    steps:
+    - name: "DEPLOY STEP"
+      run: echo "DEPLOY STEP (to k8s cluster)"

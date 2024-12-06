@@ -1,0 +1,17 @@
+schemaVersion: "2.0.0"
+fileExistenceTests:
+- name: "Check package.json existence"
+  path: "/app/package.json"
+  shouldExist: true
+
+fileContentTests:
+- name: "Check package.json content"
+  path: "/app/package.json"
+  expectedContents: [
+    '"private": true'
+  ]
+
+metadataTest:
+  envVars:
+    - key: NODE_VERSION
+      value: 20.2.0
